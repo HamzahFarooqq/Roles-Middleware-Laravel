@@ -21,14 +21,22 @@ class CheckUserRole
 
 
 
+
+
+        // FIRST METHOD 
+
+
     public function handle(Request $request, Closure $next, ...$role)
     {
-        // Check if the user is authenticated
 
+        
+        // Check if the user is authenticated
+        
         if (!$request->user()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
-
+        
+        
 
 
         // Check if the user has any of the specified roles
@@ -41,35 +49,53 @@ class CheckUserRole
         //         return $next($request);
         //     }
         // }
-
-
-
-            
+         
             // dd($request->user()->role->name);
 
 
 
-         // Check if the user is an admin
 
-    if ($request->user()->role === 'admin') {
-        return $next($request);
-    }
+        if ($request->user()->role === 'admin') {
+            return $next($request);
+        }
 
+        
 
-    // Check if the user is accessing their own resource
+        // if($request->user()->role === 'user')
+        // {
+        //     return $next($request);
 
-    $userId = $request->route('id'); // Assuming user ID is passed in the route
-    
-    // dd($userId);
-    
-
-    if ($userId != $request->user()->id) {
-        return response()->json(['error' => 'Unauthorized.'], 403);
-    }
-
-    return $next($request);
+        // }
 
 
+
+        // Check if the user is accessing their own resource
+
+        $userId = $request->route('id'); 
+        
+
+        if ($userId != $request->user()->id) {
+            return response()->json(['error' => 'Unauthorized.'], 403);
+        }
+
+        
+        
+            return $next($request);
+       
+
+
+
+
+
+    // 2ND METHOD 
+
+    // if (! $request->user() || ! $request->user()->hasRole($role))
+    //  {
+    //             // Redirect or abort the request if the user does not have the required role
+    //             abort(403, 'Unauthorized action.');
+    //         }
+
+    //         return $next($request);
 
 
 
@@ -79,7 +105,11 @@ class CheckUserRole
         // If the user does not have any of the specified roles, return unauthorized response
         // return response()->json(['error' => 'Unauthorized.'], 403);
         return response()->json(['error' => 'does not have any ROLE.'], 403);
+
     }
+
+
+
 
 
 

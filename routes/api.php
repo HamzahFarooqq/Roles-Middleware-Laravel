@@ -1,9 +1,17 @@
 <?php
 
+use App\Models\User;
+use App\Mail\AdminMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
+use App\Notifications\AdminNotification;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Notification;
+
+use Barryvdh\DomPDF\Facade\Pdf;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +27,6 @@ use App\Http\Controllers\AdminController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
-
 
 
 
@@ -43,7 +48,47 @@ route::post('login', [UserController::class, 'login']);
 
 
 
+// MAIL / NOTIFICATION PRACTICE
+
+// route::get('mail/notification', function () {
+//     Mail::send(new AdminMail());
+
+//     Notification::send(User::all(), new AdminNotification());
+
+//     return view ('welcome');
+// } );
+
+
+// PDF PRACTICE
+
+// route::get('pdf', function() {
+
+//     $total_banday = User::all();
+
+//     $data = [
+//         'name' => 'hamxah farooqq',
+//         'date' => date('m/d/Y'),
+//         'users' => $total_banday,
+//     ];
+
+//     $pdf = Pdf::loadView('all_users_pdf', $data);
+//     return $pdf->download('all-users.pdf');
+
+
+// });
+
+
+
+
+
+
+
+
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    // for EVENT - LISTENER - MAIL
+    route::post('post/store',[PostController::class, 'store']);
+
 
     // Admin CRUD routes
     Route::middleware(['checkRole:admin'])->group(function () {
@@ -63,7 +108,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         route::put('user/update/{id}', [UserController::class, 'update']);
         route::post('user/delete/{id}', [UserController::class, 'delete']);
         route::delete('user/logout', [UserController::class, 'logout']);
+
+        
+        
     });
+    
+    
 
 
 });
+
+

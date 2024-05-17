@@ -14,6 +14,10 @@ class UserController extends Controller
     public function index()
     {
         return User::all();
+
+        //  $users = User::all();
+
+        //  return view('image', [ 'users' => $users]);
     }
 
     
@@ -89,13 +93,30 @@ class UserController extends Controller
 
     function register (Request $request)
     {
+
+        if($request->has('image'))
+        {
+            $file = $request->file('image');
+
+            $ext= $file->getClientOriginalExtension();
+
+            $filename = time().'.'. $request->name  .'.'. $ext;
+
+            $path = $request->file('image')->storeAs('public/avatars', $filename);
+
+            // $file->move($path, $filename);
+
+        }
+
        
         $User = new User();
-
+ 
         $User->name = $request->name;
         $User->email = $request->email;
         $User->password = Hash::make($request->password);
         $User->role = $request->role;
+        $User->image = $filename;
+        
         $User->save();
 
         return response()->json([
